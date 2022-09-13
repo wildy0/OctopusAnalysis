@@ -192,6 +192,8 @@ if __name__ == '__main__':
     power_key = ''
     electric_unit = "kWh"
     gas_calorific = 1.02264 * 40.0 / 3.6
+    time_format = '%Y-%m-%dT%H:%M:%S%z'
+
 
     try:
         opts, args = getopt.getopt(sys.argv[1:], "hn", ["help", "nodelete"])
@@ -293,26 +295,26 @@ if __name__ == '__main__':
 
     # there is probably a more optimal way to do this but life is too short for optimisation
     print("Please wait")
-    df['thetime'] = df.apply(lambda row: datetime.strptime(row[start_key].lstrip(), '%Y-%m-%dT%H:%M:%S%z'), axis=1)
-    df['thestoptime'] = df.apply(lambda row: datetime.strptime(row[end_key].lstrip(), '%Y-%m-%dT%H:%M:%S%z'), axis=1)
+    df['thetime'] = df.apply(lambda row: datetime.strptime(row[start_key].lstrip(), time_format), axis=1)
+    df['thestoptime'] = df.apply(lambda row: datetime.strptime(row[end_key].lstrip(), time_format), axis=1)
     df['duration'] = df.apply(lambda row: (row['thestoptime'] - row['thetime']).seconds//60, axis=1)
     print("Please wait")
-    df['thewday'] = df.apply(lambda row: datetime.strptime(row[start_key].lstrip(), '%Y-%m-%dT%H:%M:%S%z').weekday(),
+    df['thewday'] = df.apply(lambda row: datetime.strptime(row[start_key].lstrip(), time_format).weekday(),
                              axis=1)
     print("Please wait")
-    df['theday'] = df.apply(lambda row: datetime.strptime(row[start_key].lstrip(), '%Y-%m-%dT%H:%M:%S%z').day, axis=1)
+    df['theday'] = df.apply(lambda row: datetime.strptime(row[start_key].lstrip(), time_format).day, axis=1)
     print("Please wait")
-    df['themonth'] = df.apply(lambda row: datetime.strptime(row[start_key].lstrip(), '%Y-%m-%dT%H:%M:%S%z').month,
+    df['themonth'] = df.apply(lambda row: datetime.strptime(row[start_key].lstrip(), time_format).month,
                               axis=1)
     print("Please wait a bit longer")
-    df['theyear'] = df.apply(lambda row: datetime.strptime(row[start_key].lstrip(), '%Y-%m-%dT%H:%M:%S%z').year, axis=1)
+    df['theyear'] = df.apply(lambda row: datetime.strptime(row[start_key].lstrip(), time_format).year, axis=1)
     print("Please wait almost done, half way now")
-    df['thehour'] = df.apply(lambda row: datetime.strptime(row[start_key].lstrip(), '%Y-%m-%dT%H:%M:%S%z').hour, axis=1)
+    df['thehour'] = df.apply(lambda row: datetime.strptime(row[start_key].lstrip(), time_format).hour, axis=1)
     print("Please wait a bit longer")
-    df['theweek'] = df.apply(lambda row: datetime.strptime(row[start_key].lstrip(), '%Y-%m-%dT%H:%M:%S%z').
+    df['theweek'] = df.apply(lambda row: datetime.strptime(row[start_key].lstrip(), time_format).
                              isocalendar()[1], axis=1)
     print("Please wait a bit longer")
-    df['yearday'] = df.apply(lambda row: datetime.strptime(row[start_key].lstrip(), '%Y-%m-%dT%H:%M:%S%z').timetuple().
+    df['yearday'] = df.apply(lambda row: datetime.strptime(row[start_key].lstrip(), time_format).timetuple().
                              tm_yday, axis=1)
     df['uday'] = df.apply(lambda row: ((row['theyear'] * 1000) + row['yearday']), axis=1)
     print('Finished processing the data')
@@ -322,7 +324,7 @@ if __name__ == '__main__':
     pdf_string = ""
     pdf_string += "The script looks for days with missing data during the day. " \
                   "I have found around 1 to 20% data have missing hour data." \
-                  "I assume smart meter data is lost from time to time,  particular if you have power cuts?\n"
+                  "I assume smart meter data is lost from time to time,  particularly if you have power cuts?\n"
 
     durations = (big_data['duration'].groupby(big_data['uday']).sum())  # calculate the duration of every row time point
     durations_t = (big_data['duration'].groupby(big_data['uday']).transform('sum'))
