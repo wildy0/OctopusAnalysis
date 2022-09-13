@@ -1,5 +1,10 @@
 # Convert xls/x or csv spreadsheet export from octopus smartmeter data to export to analyse it
 # Created by Dr Tim Wilding,  2022
+# Copyright (c) 2022, Dr Tim Wilding
+# All rights reserved.
+#
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree.
 import getopt
 import os
 import pathlib
