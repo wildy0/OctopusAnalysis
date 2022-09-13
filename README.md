@@ -1,7 +1,7 @@
 # OctopusAnalysis
 Octopus smart meter export analysis.
 
-Export the smart meter data from your octopus account.
+Export the smart meter data from your octopus account.  Then select open that file with this script.
 
 From my account I get csv files for electricity or gas.  The csv files have column headings as follows:
 
