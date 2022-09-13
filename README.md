@@ -21,5 +21,5 @@ Running the script will produce png image saves of a couple of graphs and create
 
 Overall the script provides some useful output to help you see your energy use.  Compare winter/summer differences, this may allow you to work out how much energy you use for hot water or heating (if you have gas then the summer use will mostly/entirely be for hot water).  You can also see how much you use overnight/various times of day which could help you work out what size solar panels you need, if a battery storage is good for you and what size you may need etc.  Seeing the peak gas heating use may help you workout what size gas boiler you really need, or perhaps what size heatpump you may need etc.
 
-
+You will need to install some python packages, see the import list.  Note that you should install python-docx and not docx.
 
