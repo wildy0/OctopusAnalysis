@@ -22,9 +22,24 @@ from docx.shared import Inches
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 
 
+def daily_hour_range(idoc, in_data, minhour, maxhour, title):
+    thetotal = in_data[in_data["thehour"].between(minhour, maxhour, inclusive='both')].groupby(['theyear'])[
+        'energy_use'].sum().reset_index(name='Total').set_index('theyear')
+    themean = in_data[in_data["thehour"].between(minhour, maxhour, inclusive='both')].groupby(['theyear', 'yearday'])[
+        'energy_use'].sum().reset_index().groupby(['theyear'])['energy_use'].mean().reset_index(
+        name='Mean Daily').set_index('theyear')
+    themin = in_data[in_data["thehour"].between(minhour, maxhour, inclusive='both')].groupby(['theyear', 'yearday'])[
+        'energy_use'].sum().reset_index().groupby(['theyear'])['energy_use'].min().reset_index(
+        name='Min Daily').set_index('theyear')
+    themax = in_data[in_data["thehour"].between(minhour, maxhour, inclusive='both')].groupby(['theyear', 'yearday'])[
+        'energy_use'].sum().reset_index().groupby(['theyear'])['energy_use'].max().reset_index(
+        name='Max Daily').set_index('theyear')
+    d_use = pd.concat([thetotal, themean, themax, themin], axis=1).reset_index()
+    doctable(idoc, d_use, title)
+
+
 def table_analysis(idoc, table_data, table_data_rem):
     doctable(idoc, table_data.groupby(['theyear'])['energy_use'].sum().reset_index(), 'Yearly Use')
-
     day_data = table_data_rem.groupby(['yearday', 'theyear', 'thewday', 'theday', 'themonth'])[
         'energy_use'].sum().reset_index()
 
@@ -41,10 +56,16 @@ def table_analysis(idoc, table_data, table_data_rem):
     themin = hrn_data.groupby(['theyear'])['energy_use'].min().reset_index(name='Min').set_index('theyear')
     d_use = pd.concat([themean, themax, themin], axis=1).reset_index()
     doctable(idoc, d_use, 'Hourly Use')
-    doctable(idoc, hrn_data[hrn_data["thehour"].between(0, 6, inclusive='both')].groupby(['theyear'])
-                ['energy_use'].sum().reset_index(), 'Night Use 00:00 - 06:00')
-    doctable(idoc, hrn_data[hrn_data["thehour"].between(16, 18, inclusive='both')].groupby(['theyear'])
-                ['energy_use'].sum().reset_index(), 'Total use 16:00 to 18:00')
+
+    # 'Night Use 00:00 - 06:00'
+    daily_hour_range(idoc, hrn_data, 0, 6, 'Night Use 00:00 - 06:00')
+    # 09-15
+    daily_hour_range(idoc, hrn_data, 9, 15, 'Day Use 09:00 - 15:00')
+    # evening 15-23
+    daily_hour_range(idoc, hrn_data, 15, 23, 'Evening Use 15:00 - 23:00')
+    # 16-18 peak
+    daily_hour_range(idoc, hrn_data, 16, 18, 'Peak Use 16:00 - 18:00')
+
 
 
 def doctable(idoc, data, tabletitle):
